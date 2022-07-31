@@ -1,0 +1,23 @@
+server:
+  port: 8888
+
+spring:
+  # 项目名称
+  application:
+    name: cyn-blog
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/cyn-blog?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: myvm
+    password: 1234
+    port: 6379
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      table-prefix: cyn_

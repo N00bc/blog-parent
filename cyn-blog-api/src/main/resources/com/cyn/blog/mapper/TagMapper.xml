@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cyn.blog.mapper.TagMapper">
+
+    <select id="findTagsByArticleId" resultType="com.cyn.blog.entity.pojo.Tag">
+        SELECT id, avatar, tag_name
+        FROM cyn_tag
+        WHERE id in (
+            SELECT tag_id
+            FROM cyn_article_tag
+            WHERE article_id = #{articleId}
+        )
+    </select>
+    <select id="findTagIds" resultType="java.lang.Long">
+        SELECT tag_id
+        FROM cyn_article_tag
+        GROUP BY tag_id
+        ORDER BY count(*) DESC LIMIT #{limit};
+    </select>
+</mapper>
