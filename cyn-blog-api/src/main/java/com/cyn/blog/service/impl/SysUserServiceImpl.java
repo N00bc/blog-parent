@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyn.blog.entity.pojo.SysUser;
 import com.cyn.blog.entity.vo.LoginUserVo;
 import com.cyn.blog.entity.vo.Result;
+import com.cyn.blog.entity.vo.UserVo;
 import com.cyn.blog.gloableEnum.ErrorCode;
 import com.cyn.blog.mapper.SysUserMapper;
 import com.cyn.blog.service.SysUserService;
 import com.cyn.blog.utils.JwtUtils;
 import com.cyn.blog.utils.SystemConstants;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -119,5 +121,14 @@ public class SysUserServiceImpl implements SysUserService {
         // 1.从redis中根据key 获取 value，若value == null 说明已经过期，需要重新登录
         String userInfo = redisTemplate.opsForValue().get(SystemConstants.REDIS_TOKEN_KEY + token);
         return JSON.parseObject(userInfo, SysUser.class);
+    }
+
+    @Override
+    public UserVo findUserVoById(Long authorId) {
+        SysUser sysUser = findUserById(authorId);
+        if (sysUser == null) sysUser = SystemConstants.DEFAULT_USER;
+        UserVo userVo  = new UserVo();
+        BeanUtils.copyProperties(sysUser,userVo);
+        return userVo;
     }
 }

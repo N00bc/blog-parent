@@ -2,6 +2,7 @@ package com.cyn.blog.service;
 
 import com.cyn.blog.entity.pojo.SysUser;
 import com.cyn.blog.entity.vo.Result;
+import com.cyn.blog.entity.vo.UserVo;
 
 /**
  * @author G0dc
@@ -18,4 +19,6 @@ public interface SysUserService {
     void saveUser(SysUser user);
 
     SysUser checkToken(String token);
+
+    UserVo findUserVoById(Long authorId);
 }
