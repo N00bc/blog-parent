@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentMapper commentMapper;
-
     @Autowired
     private SysUserService sysUserService;
 
 
     /**
      * 查询文章评论
+     *
      * @param articleId: 文章id
      * @return com.cyn.blog.entity.vo.Result
      * @author G0dc
@@ -56,32 +56,64 @@ public class CommentServiceImpl implements CommentService {
 
     //  -------------------private methods---------------------
 
+    /**
+     * 将Comment集合转换为CommentVo集合
+     * @param comments:评论集合
+     * @return java.util.List<com.cyn.blog.entity.vo.CommentVo>
+     * @author G0dc
+     * @date 2022/8/1 19:36
+     */
     private List<CommentVo> copyList(List<Comment> comments) {
         return comments.stream()
                 .map(this::copyComment)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 根据数据库中Comment信息封装CommentVo
+     *
+     * @param comment:
+     * @return com.cyn.blog.entity.vo.CommentVo
+     * @author G0dc
+     * @date 2022/8/1 19:34
+     */
     private CommentVo copyComment(Comment comment) {
         CommentVo commentVo = new CommentVo();
-        BeanUtils.copyProperties(comment,commentVo);
+        BeanUtils.copyProperties(comment, commentVo);
         // 查询作者信息
         UserVo userVo = sysUserService.findUserVoById(comment.getAuthorId());
         // 查询子评论
         commentVo.setAuthor(userVo);
         // 如果level == 1需要查询子评论
         Integer isChildComments = comment.getLevel();
-        if(1 == isChildComments){
+        if (1 == isChildComments) {
             Long id = comment.getId();
             List<CommentVo> childCommentList = findCommentsByParentId(id);
             commentVo.setChildrens(childCommentList);
         }
         // to User 给谁评论
+        if (isChildComments > 1) {
+            Long toUid = comment.getToUid();
+            UserVo toUserVo = sysUserService.findUserVoById(toUid);
+            commentVo.setToUser(toUserVo);
+        }
         return commentVo;
     }
 
+    /**
+     * 查询子评论
+     * @param id:父评论的id
+     * @return java.util.List<com.cyn.blog.entity.vo.CommentVo>
+     * @author G0dc
+     * @date 2022/8/1 19:33
+     */
     private List<CommentVo> findCommentsByParentId(Long id) {
-        return null;
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper
+                .eq(Comment::getParentId, id)
+                .eq(Comment::getLevel,2);
+        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        return copyList(comments);
     }
 
 }
