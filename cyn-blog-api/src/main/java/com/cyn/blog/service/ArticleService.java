@@ -1,7 +1,6 @@
 package com.cyn.blog.service;
 
-import com.cyn.blog.entity.vo.ArticleVo;
-import com.cyn.blog.entity.vo.PageParams;
+import com.cyn.blog.entity.param.PageParams;
 import com.cyn.blog.entity.vo.Result;
 
 /**

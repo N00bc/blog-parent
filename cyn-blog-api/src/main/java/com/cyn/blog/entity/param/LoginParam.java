@@ -1,4 +1,4 @@
-package com.cyn.blog.entity.vo;
+package com.cyn.blog.entity.param;
 
 import lombok.Data;
 

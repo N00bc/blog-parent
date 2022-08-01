@@ -2,6 +2,7 @@ package com.cyn.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyn.blog.entity.param.PageParams;
 import com.cyn.blog.entity.pojo.Article;
 import com.cyn.blog.entity.pojo.ArticleBody;
 import com.cyn.blog.entity.pojo.Category;
@@ -12,11 +13,9 @@ import com.cyn.blog.service.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**

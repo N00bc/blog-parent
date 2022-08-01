@@ -1,6 +1,6 @@
 package com.cyn.blog.service;
 
-import com.cyn.blog.entity.vo.LoginParam;
+import com.cyn.blog.entity.param.LoginParam;
 import com.cyn.blog.entity.vo.Result;
 import org.springframework.transaction.annotation.Transactional;
 

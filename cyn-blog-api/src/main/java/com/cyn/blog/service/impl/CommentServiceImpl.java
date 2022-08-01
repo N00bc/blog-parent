@@ -1,13 +1,18 @@
 package com.cyn.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.cyn.blog.entity.param.CommentParam;
 import com.cyn.blog.entity.pojo.Comment;
+import com.cyn.blog.entity.pojo.SysUser;
 import com.cyn.blog.entity.vo.CommentVo;
 import com.cyn.blog.entity.vo.Result;
 import com.cyn.blog.entity.vo.UserVo;
+import com.cyn.blog.gloableEnum.ErrorCode;
 import com.cyn.blog.mapper.CommentMapper;
 import com.cyn.blog.service.CommentService;
 import com.cyn.blog.service.SysUserService;
+import com.cyn.blog.utils.UserThreadLocal;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,10 +59,31 @@ public class CommentServiceImpl implements CommentService {
         return Result.success(commentVoList);
     }
 
+    @Override
+    public Result createComment(CommentParam commentParam) {
+        // 1.对评论内容进行合法性判断
+        if (StringUtils.isBlank(commentParam.getContent()))
+            return Result.fail(ErrorCode.COMMENT_BODY_EMPTY.getCode(), ErrorCode.COMMENT_BODY_EMPTY.getMsg());
+        // 2.获取当前用户信息
+        SysUser sysUser = UserThreadLocal.get();
+        // 3.将评论记录到数据库
+        Comment comment = new Comment();
+        comment.setArticleId(commentParam.getArticleId());
+        comment.setAuthorId(sysUser.getId());
+        comment.setContent(commentParam.getContent());
+        comment.setCreateDate(System.currentTimeMillis());
+        Long parentId = commentParam.getParent();
+        Integer level = (parentId == null || parentId == 0) ? 1 : 2;
+        comment.setLevel(level);
+
+        return null;
+    }
+
     //  -------------------private methods---------------------
 
     /**
      * 将Comment集合转换为CommentVo集合
+     *
      * @param comments:评论集合
      * @return java.util.List<com.cyn.blog.entity.vo.CommentVo>
      * @author G0dc
@@ -102,6 +128,7 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * 查询子评论
+     *
      * @param id:父评论的id
      * @return java.util.List<com.cyn.blog.entity.vo.CommentVo>
      * @author G0dc
@@ -111,7 +138,7 @@ public class CommentServiceImpl implements CommentService {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper
                 .eq(Comment::getParentId, id)
-                .eq(Comment::getLevel,2);
+                .eq(Comment::getLevel, 2);
         List<Comment> comments = commentMapper.selectList(queryWrapper);
         return copyList(comments);
     }

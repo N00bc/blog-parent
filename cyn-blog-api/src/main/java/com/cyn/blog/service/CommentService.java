@@ -1,5 +1,6 @@
 package com.cyn.blog.service;
 
+import com.cyn.blog.entity.param.CommentParam;
 import com.cyn.blog.entity.vo.Result;
 
 /**
@@ -10,4 +11,6 @@ import com.cyn.blog.entity.vo.Result;
 public interface CommentService {
 
     Result getCommentByArticleId(Long articleId);
+
+    Result createComment(CommentParam commentParam);
 }

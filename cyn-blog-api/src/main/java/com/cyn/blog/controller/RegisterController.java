@@ -1,6 +1,6 @@
 package com.cyn.blog.controller;
 
-import com.cyn.blog.entity.vo.LoginParam;
+import com.cyn.blog.entity.param.LoginParam;
 import com.cyn.blog.entity.vo.Result;
 import com.cyn.blog.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;

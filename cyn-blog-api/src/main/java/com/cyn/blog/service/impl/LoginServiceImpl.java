@@ -2,7 +2,7 @@ package com.cyn.blog.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.cyn.blog.entity.pojo.SysUser;
-import com.cyn.blog.entity.vo.LoginParam;
+import com.cyn.blog.entity.param.LoginParam;
 import com.cyn.blog.entity.vo.LoginUserVo;
 import com.cyn.blog.entity.vo.Result;
 import com.cyn.blog.gloableEnum.ErrorCode;

@@ -1,6 +1,5 @@
 package com.cyn.blog.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.cyn.blog.entity.pojo.Article;
 import com.cyn.blog.mapper.ArticleMapper;

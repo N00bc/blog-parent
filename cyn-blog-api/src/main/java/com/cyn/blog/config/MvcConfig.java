@@ -34,6 +34,7 @@ public class MvcConfig implements WebMvcConfigurer {
         registry
                 .addInterceptor(loginInterceptor)
                 // TODO 后续按需求添加路径
-                .addPathPatterns("/test");
+                // 添加评论需要用户信息
+                .addPathPatterns("/comments/create/change");
     }
 }
