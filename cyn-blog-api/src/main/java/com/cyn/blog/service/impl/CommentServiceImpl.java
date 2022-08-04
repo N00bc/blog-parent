@@ -53,7 +53,8 @@ public class CommentServiceImpl implements CommentService {
         queryWrapper
                 .eq(Comment::getArticleId, articleId)
                 // TODO 暂时没搞明白这边为啥要在条件语句中加level == 1
-                .eq(Comment::getLevel, 1);
+                .eq(Comment::getLevel, 1)
+                .orderByDesc(Comment::getCreateDate);
         List<Comment> comments = commentMapper.selectList(queryWrapper);
         List<CommentVo> commentVoList = copyList(comments);
         return Result.success(commentVoList);
@@ -72,10 +73,16 @@ public class CommentServiceImpl implements CommentService {
         comment.setAuthorId(sysUser.getId());
         comment.setContent(commentParam.getContent());
         comment.setCreateDate(System.currentTimeMillis());
+        // 3.1 设置parent
         Long parentId = commentParam.getParent();
+        comment.setParentId(parentId == null ? 0 : parentId);
+        // 3.2 设置Level
         Integer level = (parentId == null || parentId == 0) ? 1 : 2;
         comment.setLevel(level);
-
+        // 3.3 设置to_uid
+        Long toUserId = commentParam.getToUserId();
+        comment.setToUid(toUserId == null ? 0 : toUserId);
+        commentMapper.insert(comment);
         return null;
     }
 

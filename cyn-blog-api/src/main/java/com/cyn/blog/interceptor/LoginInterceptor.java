@@ -20,13 +20,14 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author G0dc
  * @description:
- * @date 2022/7/28 15:17    
+ * @date 2022/7/28 15:17
  */
 @Component
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     private SysUserService sysUserService;
+
     /**
      * 登录拦截器
      *
@@ -40,14 +41,14 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // TODO 没搞明白
-        if((handler instanceof HandlerMethod)) return true;
+        if (!(handler instanceof HandlerMethod)) return true;
         // 1.获取请求头中的token
         String token = request.getHeader("Authorization");
 
         log.info("================request start================");
-        log.info("request uri{}",request.getRequestURI());
-        log.info("request method:{}",request.getMethod());
-        log.info("token{}",token);
+        log.info("request uri{}", request.getRequestURI());
+        log.info("request method:{}", request.getMethod());
+        log.info("token:{}", token);
         log.info("================ request end================");
 
         // 2.判断token是否为空，非空则根据token解析出用户信息

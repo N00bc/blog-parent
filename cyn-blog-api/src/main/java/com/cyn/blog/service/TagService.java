@@ -14,4 +14,7 @@ public interface TagService {
     List<TagVo> findTagsByArticleId(Long articleId);
 
     Result getHotTags(int limit);
+
+    Result getAllTags();
+
 }

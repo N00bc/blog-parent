@@ -18,9 +18,25 @@ public class TagsController {
     @Autowired
     private TagService tagService;
 
+    /**
+     * 获取最热标签，只取前5
+     * @return com.cyn.blog.entity.vo.Result
+     * @author G0dc
+     * @date 2022/8/2 11:50
+     */
     @GetMapping("/hot")
     public Result getHotTags(){
         int limit = 6;
         return tagService.getHotTags(limit);
+    }
+    /**
+     * 获取所有标签
+     * @return com.cyn.blog.entity.vo.Result
+     * @author G0dc
+     * @date 2022/8/2 11:50
+     */
+    @GetMapping
+    public Result getAllTags(){
+        return tagService.getAllTags();
     }
 }

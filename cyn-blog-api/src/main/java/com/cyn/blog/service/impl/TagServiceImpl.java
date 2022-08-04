@@ -1,5 +1,7 @@
 package com.cyn.blog.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.cyn.blog.entity.pojo.Tag;
 import com.cyn.blog.entity.vo.Result;
 import com.cyn.blog.entity.vo.TagVo;
@@ -39,6 +41,19 @@ public class TagServiceImpl implements TagService {
         else tags = tagMapper.selectBatchIds(tagIds);
 
         return Result.success(tags);
+    }
+
+    /**
+     * 查询所有标签
+     * @return com.cyn.blog.entity.vo.Result
+     * @author G0dc
+     * @date 2022/8/2 11:51
+     */
+    @Override
+    public Result getAllTags() {
+        List<Tag> tags = tagMapper.selectList(new LambdaQueryWrapper<>());
+        List<TagVo> tagVos = BeanUtil.copyToList(tags, TagVo.class);
+        return Result.success(tagVos);
     }
 
     //  -------------------private methods---------------------

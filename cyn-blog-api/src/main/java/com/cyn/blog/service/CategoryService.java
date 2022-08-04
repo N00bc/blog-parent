@@ -2,6 +2,7 @@ package com.cyn.blog.service;
 
 import com.cyn.blog.entity.pojo.Category;
 import com.cyn.blog.entity.vo.CategoryVo;
+import com.cyn.blog.entity.vo.Result;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ import java.util.List;
  */
 public interface CategoryService {
     Category findCategoryById(Long categoryId);
+
+    Result getAllCategories();
 }
