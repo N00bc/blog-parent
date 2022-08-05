@@ -1,5 +1,6 @@
 package com.cyn.blog.controller;
 
+import com.cyn.blog.entity.param.ArticleParam;
 import com.cyn.blog.entity.param.PageParams;
 import com.cyn.blog.entity.vo.Result;
 import com.cyn.blog.service.ArticleService;
@@ -26,53 +27,55 @@ public class ArticleController {
      * @date 2022/7/25 15:37
      */
     @PostMapping
-    public Result listArticles(@RequestBody PageParams pageParams){
+    public Result listArticles(@RequestBody PageParams pageParams) {
         return articleServiceImpl.listArticles(pageParams);
     }
 
     /**
-     * @Description: 首页  最热文章(取前五条)
-
      * @return com.cyn.blog.entity.vo.Result
+     * @Description: 首页  最热文章(取前五条)
      * @author G0dc
      * @date 2022/7/26 15:29
      */
     @PostMapping("/hot")
-    public Result getHotArticle(){
+    public Result getHotArticle() {
         int limit = 5;
         return articleServiceImpl.getHotArticle(limit);
     }
 
     /**
-     * @Description: 列出最新文章
-
      * @return com.cyn.blog.entity.vo.Result
+     * @Description: 列出最新文章
      * @author G0dc
      * @date 2022/7/26 15:38
      */
 
     @PostMapping("/new")
-    public Result getNewArticle(){
+    public Result getNewArticle() {
         int limit = 5;
         return articleServiceImpl.getNewArticle(limit);
     }
 
     /**
-     * @Description: 查询文章归档
-
      * @return com.cyn.blog.entity.vo.Result
+     * @Description: 查询文章归档
      * @author G0dc
      * @date 2022/7/26 15:39
      */
 
     @PostMapping("/listArchives")
-    public Result getListArchives(){
+    public Result getListArchives() {
         return articleServiceImpl.getListArchives();
     }
 
     @PostMapping("/view/{id}")
-    public Result getArticleBodyById(@PathVariable("id") Long id){
+    public Result getArticleBodyById(@PathVariable("id") Long id) {
         return articleServiceImpl.getArticleBodyById(id);
+    }
+
+    @PostMapping("/publish")
+    public Result publishArticle(@RequestBody ArticleParam articleParam) {
+        return articleServiceImpl.publishArticle(articleParam);
     }
 }
 

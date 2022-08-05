@@ -2,20 +2,24 @@ package com.cyn.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyn.blog.entity.param.ArticleBodyParam;
+import com.cyn.blog.entity.param.ArticleParam;
 import com.cyn.blog.entity.param.PageParams;
-import com.cyn.blog.entity.pojo.Article;
-import com.cyn.blog.entity.pojo.ArticleBody;
-import com.cyn.blog.entity.pojo.Category;
+import com.cyn.blog.entity.pojo.*;
 import com.cyn.blog.entity.vo.*;
 import com.cyn.blog.mapper.ArticleBodyMapper;
 import com.cyn.blog.mapper.ArticleMapper;
+import com.cyn.blog.mapper.ArticleTagMapper;
 import com.cyn.blog.service.*;
+import com.cyn.blog.utils.UserThreadLocal;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -124,8 +128,66 @@ public class ArticleServiceImpl implements ArticleService {
         // 2.将查得的结果转换为Vo对象
         ArticleVo articleVo = copyArticle(article, true, true, true, true);
         // 3.更新浏览数
-        threadService.updateArticleViewCount(articleMapper,article);
+        threadService.updateArticleViewCount(articleMapper, article);
         return Result.success(articleVo);
+    }
+
+    @Autowired
+    private ArticleTagMapper articleTagMapper;
+
+    /**
+     * 将文章写入数据库
+     * 1.插入article表
+     * 2.将文章主体插入article_body表
+     * 3.将文章id插入article_tag表
+     * 4.category新增
+     * @param articleParam:新增文章实体类
+     * @return com.cyn.blog.entity.vo.Result
+     * @author Godc
+     * @date 2022/8/5 16:16
+     */
+    @Override
+    public Result publishArticle(ArticleParam articleParam) {
+        // 获取当前用户信息
+        SysUser sysUser = UserThreadLocal.get();
+        Article article = new Article();
+        article.setAuthorId(sysUser.getId()); // 设置作者id
+        article.setCreateDate(System.currentTimeMillis()); // 设置当前时间
+        article.setTitle(articleParam.getTitle()); // 设置title
+        article.setSummary(articleParam.getSummary()); // 设置概述
+        article.setViewCounts(0); // 初始化浏览量
+        article.setWeight(0); // 初始化为不置顶
+        article.setCategoryId(articleParam.getCategory().getId()); // 设置Category
+        article.setCommentCounts(0); //初始化评论数
+
+        // tips:在将article放入数据库时会生成id
+        // 获取id后再对tags和body等进行插入数据库表操作
+        articleMapper.insert(article);
+        Long articleId = article.getId();
+
+        // 1.将文章内容插入article_body表 对应实体类为 ArticleBody
+        ArticleBody articleBody = new ArticleBody();
+        articleBody.setArticleId(articleId);
+        articleBody.setContent(articleParam.getBody().getContent());
+        articleBody.setContentHtml(articleParam.getBody().getContentHtml());
+        articleBodyMapper.insert(articleBody);
+        Long articleBodyId = articleBody.getId();
+        article.setBodyId(articleBodyId);
+        // 2.将tag插入article_tag表 对应实体类为 ArticleTag
+        List<TagVo> tags = articleParam.getTags();
+        if (tags != null) {
+            for (TagVo tagVo : tags) {
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setArticleId(articleId);
+                articleTag.setTagId(tagVo.getId());
+                articleTagMapper.insert(articleTag);
+            }
+        }
+        // final 更新article表
+        articleMapper.updateById(article);
+        Map<String,String> map = new HashMap<>();
+        map.put("id",articleId.toString());
+        return Result.success(map);
     }
 
     //  -------------------private methods---------------------

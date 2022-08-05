@@ -7,9 +7,9 @@ spring:
     name: cyn-blog
   # 数据库配置
   datasource:
-    url: jdbc:mysql://localhost:3306/cyn-blog?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
+    url: jdbc:mysql://myvm:3306/cyn-blog?useUnicode=true&characterEncoding=UTF-8&serverTimeZone=UTC
     username: root
-    password: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     host: myvm

@@ -1,7 +1,9 @@
 package com.cyn.blog.service;
 
+import com.cyn.blog.entity.param.ArticleParam;
 import com.cyn.blog.entity.param.PageParams;
 import com.cyn.blog.entity.vo.Result;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author G0dc
@@ -19,4 +21,7 @@ public interface ArticleService {
     Result getListArchives();
 
     Result getArticleBodyById(Long id);
+
+    @Transactional
+    Result publishArticle(ArticleParam articleParam);
 }

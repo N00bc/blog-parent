@@ -35,6 +35,9 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addInterceptor(loginInterceptor)
                 // TODO 后续按需求添加路径
                 // 添加评论需要用户信息
-                .addPathPatterns("/comments/create/change");
+                .addPathPatterns("/comments/create/change")
+                // 发布文章需要用户信息
+                .addPathPatterns("/articles/publish");
+
     }
 }
