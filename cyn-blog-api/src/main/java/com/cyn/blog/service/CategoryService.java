@@ -15,4 +15,8 @@ public interface CategoryService {
     Category findCategoryById(Long categoryId);
 
     Result getAllCategories();
+
+    Result getCategoriesDetails();
+
+    Result getCategoriesById(Long id);
 }

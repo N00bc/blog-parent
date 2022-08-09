@@ -2,6 +2,7 @@ package com.cyn.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.cyn.blog.anno.LogAnno;
 import com.cyn.blog.entity.param.ArticleBodyParam;
 import com.cyn.blog.entity.param.ArticleParam;
 import com.cyn.blog.entity.param.PageParams;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +44,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * 根据创建时间降序显示文章
-     * 00000
      *
      * @param pageParams:
      * @return com.cyn.blog.entity.vo.Result
@@ -53,11 +55,27 @@ public class ArticleServiceImpl implements ArticleService {
     public Result listArticles(PageParams pageParams) {
         Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        // 需要查询对应分类的文章
+        if (pageParams.getCategoryId() != null) {
+            queryWrapper.eq(Article::getCategoryId, pageParams.getCategoryId());
+        }
         // 根据置顶和创建时间排序
         queryWrapper.orderByDesc(Article::getWeight, Article::getCreateDate);
         Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
         List<Article> articles = articlePage.getRecords();
         List<ArticleVo> articleVoList = copyList(articles, true, true, false, false);
+        if (pageParams.getTagId() != null) {
+            TagVo targetTag = (TagVo) tagService.getDetailById(pageParams.getTagId()).getData();
+            articleVoList = articleVoList.stream()
+                    .map(articleVo -> {
+                        Long id = articleVo.getId();
+                        List<TagVo> tagVoList = tagService.findTagsByArticleId(id);
+                        articleVo.setTags(tagVoList);
+                        return articleVo;
+                    })
+                    .filter(articleVo -> articleVo.getTags().contains(targetTag))
+                    .collect(Collectors.toList());
+        }
         return Result.success(articleVoList);
     }
 
@@ -121,6 +139,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @author G0dc
      * @date 2022/7/29 7:31
      */
+    @LogAnno(module = "文章模块", func = "查询文章全部内容")
     @Override
     public Result getArticleBodyById(Long id) {
         //
@@ -141,6 +160,7 @@ public class ArticleServiceImpl implements ArticleService {
      * 2.将文章主体插入article_body表
      * 3.将文章id插入article_tag表
      * 4.category新增
+     *
      * @param articleParam:新增文章实体类
      * @return com.cyn.blog.entity.vo.Result
      * @author Godc
@@ -185,8 +205,8 @@ public class ArticleServiceImpl implements ArticleService {
         }
         // final 更新article表
         articleMapper.updateById(article);
-        Map<String,String> map = new HashMap<>();
-        map.put("id",articleId.toString());
+        Map<String, String> map = new HashMap<>();
+        map.put("id", articleId.toString());
         return Result.success(map);
     }
 
